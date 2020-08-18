@@ -3,7 +3,8 @@ var path = require("path");
 var zipUtility = require("./zip-utility");
 var download = require("./fileDownload");
 
-var buildConfigs = require("./buildConfigs.json");
+var homeDir = require('os').homedir();
+var lpakUserDirectory = path.join(homeDir, ".lpak");
 
 var commandMap = {
     '-h': printHelp,
@@ -13,6 +14,11 @@ var commandMap = {
     '--init': initializeProject,
     '-i': initializeProject
 }
+
+var packagingMethods = {
+    "Windows": onZipCompleteWindows,
+    "MacOSX": onZipCompleteMacOSX
+};
 
 process.on('uncaughtException', function (err) {
     console.error(err);
@@ -39,25 +45,88 @@ if (!fse.pathExistsSync(lpakPath)) {
 var lpak = require(lpakPath)
 var applicationName = lpak.name;
 
-buildConfigs = buildConfigs[lpak["love-version"]].build;
-if (!buildConfigs) {
-    throw new Error("The love version " + lpak["love-version"] + " is not supported.");
+var buildConfigDir = path.join(lpakUserDirectory, "buildConfigs.json");
+var buildConfigs = null;
+var tempLoveDir = null;
+var tempLoveZip = null;
+var tempLoveExtract = null;
+var tempLoveDirRoot = null;
+var applicationDotLovePath = null;
+var files = null;
+var releaseDir = null;
+var bundleDir = null;
+var build = null;
+var loveConfig = null;
+
+console.log("Downloading build configurations.");
+
+download("https://raw.githubusercontent.com/philippe-patenaude/lpak/master/buildConfigs.json", buildConfigDir, function(err) {
+
+    if (err) throw err;
+
+    buildConfigs = require(buildConfigDir);
+
+    var buildConfigByVersion = buildConfigs[lpak["love-version"]];
+    if (!buildConfigByVersion) {
+        var supportedVersions = getVersionList();
+        throw new Error("The love version " + lpak["love-version"] + " is not supported. Supported values are " + JSON.stringify(supportedVersions) + ".");
+    }
+
+    buildConfigs = buildConfigByVersion.build;
+    
+    buildConfigs.osx.includes[0].finalName = applicationName+".app";
+
+    prepareBuild();
+
+});
+
+function prepareBuild() {
+    
+    // Grab the first argument or default to Windows 32 bit.
+    build = firstCommand || "win32";
+    build = build.toLowerCase();
+    
+    loveConfig = buildConfigs[build];
+    
+    if (!loveConfig) {
+        throw new Error("An invalid build ID was passed in: " + build + ". Valid values are win32, win64, and osx.");
+    }
+    
+    files = lpak.files;
+    
+    releaseDir = path.join("release", build);
+    bundleDir = path.join(releaseDir, "bundle");
+    fse.emptyDirSync(releaseDir);
+    fse.ensureDirSync(bundleDir);
+    
+    tempLoveDir = path.join(lpakUserDirectory, lpak["love-version"], build);
+    tempLoveZip = path.join(tempLoveDir, "love.zip");
+    tempLoveExtract = path.join(tempLoveDir, "love");
+    tempLoveDirRoot = path.join(tempLoveExtract, loveConfig["extracted-root"]);
+    applicationDotLovePath = path.join(releaseDir, applicationName + ".love");
+    if (!fse.existsSync(tempLoveZip)) {
+        fse.ensureDirSync(tempLoveDir);
+        console.log("Downloading Love2D zip for " + build);
+        download(buildConfigs[build].path, tempLoveZip, function(downErr) {
+            if (downErr) {
+                fse.emptyDirSync(tempLoveDir);
+                throw downErr;
+            }
+            zipUtility.unZip(tempLoveZip, tempLoveExtract, function(err) {
+                if (err) {
+                    fse.emptyDirSync(tempLoveDir);
+                    throw err;
+                }
+                startPackaging()
+            });
+        });
+    } else {
+        console.log("Love2D zip already downloaded for " + build + ", so moving straight to packaging.");
+        startPackaging()
+    }
 }
 
-buildConfigs.osx.includes[0].finalName = applicationName+".app";
-
-// Grab the first argument or default to Windows 32 bit.
-var build = firstCommand || "win32";
-build = build.toLowerCase();
-
-var loveConfig = buildConfigs[build];
-
-if (!loveConfig) {
-    var builds = getBuildList();
-    throw new Error("An invalid build ID was passed in: " + build + ". Valid values are " + JSON.stringify(builds) + ".");
-}
-
-function getBuildList() {
+function getVersionList() {
     var builds = [];
     if (buildConfigs) {
         Object.keys(buildConfigs).forEach(function(key) {
@@ -65,45 +134,6 @@ function getBuildList() {
         });
     }
     return builds;
-}
-
-var files = lpak.files;
-
-var packagingMethods = {
-    "Windows": onZipCompleteWindows,
-    "MacOSX": onZipCompleteMacOSX
-};
-
-var releaseDir = path.join("release", build);
-var bundleDir = path.join(releaseDir, "bundle");
-fse.emptyDirSync(releaseDir);
-fse.ensureDirSync(bundleDir);
-
-var homeDir = require('os').homedir();
-// lpak["love-version"]
-// build
-var tempLoveDir = path.join(homeDir, ".lpak", lpak["love-version"], build);
-var tempLoveZip = path.join(tempLoveDir, "love.zip");
-var tempLoveExtract = path.join(tempLoveDir, "love");
-var tempLoveDirRoot = path.join(tempLoveExtract, loveConfig["extracted-root"]);
-var applicationDotLovePath = path.join(releaseDir, applicationName + ".love");
-if (!fse.existsSync(tempLoveZip)) {
-    fse.ensureDirSync(tempLoveDir);
-    download(buildConfigs[build].path, tempLoveZip, function(downErr) {
-        if (downErr) {
-            fse.emptyDirSync(tempLoveDir);
-            throw downErr;
-        }
-        zipUtility.unZip(tempLoveZip, tempLoveExtract, function(err) {
-            if (err) {
-                fse.emptyDirSync(tempLoveDir);
-                throw err;
-            }
-            startPackaging()
-        });
-    });
-} else {
-    startPackaging()
 }
 
 function startPackaging() {
@@ -115,9 +145,8 @@ function startPackaging() {
 }
 
 function printHelp() {
-    var builds = getBuildList();
     console.log("Usage: lpak [<os>]");
-    console.log("\tos: One of " + JSON.stringify(builds) + ". This describes what operating system to build the artifact for. It defaults to win32.");
+    console.log("\tos: One of win32, win64, or osx. This describes what operating system to build the artifact for. It defaults to win32.");
 }
 
 function initializeProject() {
@@ -142,6 +171,8 @@ function initializeProject() {
 
 function onZipCompleteWindows() {
 
+    console.log("Creating game package for Windows.");
+
     var version = createVersionFile(loveConfig.version_path);
 
     var exePath = path.join(tempLoveDirRoot, "love.exe");
@@ -159,12 +190,14 @@ function onZipCompleteWindows() {
     });
     includeList.push({"name":applicationName+".exe"});
     zipUtility.createZip(includeList, bundleDir, path.join(releaseDir, applicationName + ".zip"), function() {
-        console.log("Zip complete.");
+        console.log("Windows zip complete.");
     });
 
 }
 
 function onZipCompleteMacOSX() {
+
+    console.log("Creating game package for Mac OS X.");
 
     var includeList = stageFilesAndGetIncludeList(loveConfig.includes);
     // Delete the love executable so that it doesn't get included in the directory zip.
@@ -188,7 +221,7 @@ function onZipCompleteMacOSX() {
     // Copy the game content into the folder structure.
     fse.copyFileSync(applicationDotLovePath, path.join(bundleDir, "love.app/Contents/Resources", applicationName + ".love"));
     zipUtility.createZip(includeList, bundleDir, path.join(releaseDir, applicationName + ".zip"), function() {
-        console.log("Zip complete.");
+        console.log("Mac OS X zip complete.");
     });
 
 }
