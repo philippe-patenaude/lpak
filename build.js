@@ -10,6 +10,7 @@ var files = [
     "Info.plist",
     "package.json",
     "zip-utility.js",
+    "fileDownload.js",
     "node_modules"
 ];
 
