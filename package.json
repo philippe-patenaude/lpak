@@ -1,0 +1,23 @@
+{
+  "name": "lpak-build",
+  "version": "1.0.0",
+  "description": "This project is used to build Love 2D game distributable packages.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philippe-patenaude/lpak.git"
+  },
+  "author": "philippe.patenaude.coder@gmail.com",
+  "license": "ISC",
+  "homepage": "https://github.com/philippe-patenaude/lpak",
+  "dependencies": {
+    "archiver": "^3.0.0",
+    "extract-zip": "^2.0.1",
+    "follow-redirects": "^1.13.0",
+    "fs-extra": "^7.0.1"
+  }
+}

@@ -1,0 +1,50 @@
+{
+    "11.3": {
+        "build": {
+            "win64": {
+                "name": "Win64",
+                "path": "https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip",
+                "extracted-root": "love-11.3-win64",
+                "includes": [
+                    {"name":"license.txt"},
+                    {"name":"love.dll"},
+                    {"name":"lua51.dll"},
+                    {"name":"mpg123.dll"},
+                    {"name":"msvcp120.dll"},
+                    {"name":"msvcr120.dll"},
+                    {"name":"OpenAL32.dll"},
+                    {"name":"SDL2.dll"}
+                ],
+                "version_path": "./",
+                "packaging_method": "Windows"
+            },
+            "win32": {
+                "name": "Win32",
+                "path": "https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip",
+                "extracted-root": "love-11.3-win32",
+                "includes": [
+                    {"name":"license.txt"},
+                    {"name":"love.dll"},
+                    {"name":"lua51.dll"},
+                    {"name":"mpg123.dll"},
+                    {"name":"msvcp120.dll"},
+                    {"name":"msvcr120.dll"},
+                    {"name":"OpenAL32.dll"},
+                    {"name":"SDL2.dll"}
+                ],
+                "version_path": "./",
+                "packaging_method": "Windows"
+            },
+            "osx": {
+                "name": "OSX",
+                "path": "https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip",
+                "extracted-root": "",
+                "includes": [
+                    {"name":"love.app","finalName":null}
+                ],
+                "version_path": "./love.app/Contents/Resources/",
+                "packaging_method": "MacOSX"
+            }
+        }
+    }
+}

@@ -1,0 +1,1 @@
+This is an example project to test love2D packaging.

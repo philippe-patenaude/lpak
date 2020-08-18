@@ -1,0 +1,12 @@
+{
+    "name": "lpak-example",
+    "id": "com.wintergreen.lpak-example",
+    "love-version": "11.3",
+    "files": [
+        {"name":"main.lua"},
+        {"name":"src"}
+    ],
+    "includes": [
+        {"name":"info.txt"}
+    ]
+}
