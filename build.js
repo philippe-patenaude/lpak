@@ -5,11 +5,7 @@ var zipUtil = require("./zip-utility");
 var buildDir = "dist";
 
 var files = [
-    "credentials.example.json",
     "bin",
-    "git-tag.bat",
-    "google-auth.js",
-    "google-drive-api.js",
     "index.js",
     "Info.plist",
     "package.json",
