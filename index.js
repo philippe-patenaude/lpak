@@ -60,6 +60,8 @@ var loveConfig = null;
 
 console.log("Downloading build configurations.");
 
+fse.ensureDirSync(lpakUserDirectory);
+
 download("https://raw.githubusercontent.com/philippe-patenaude/lpak/master/buildConfigs.json", buildConfigDir, function(err) {
 
     if (err) throw err;
