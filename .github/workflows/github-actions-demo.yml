@@ -14,13 +14,12 @@ jobs:
           node-version: '14'
       - run: wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v1.1.2.zip" -O lpak.zip
       - run: unzip lpak.zip
-      - run: pushd ${{ github.workspace }}/lpak-1.1.2/
-      - run: npm install
-      - run: popd
-      - run: pushd ${{ github.workspace }}/example-project/
-      - run: pwd
-      - run: node ${{ github.workspace }}/lpak-1.1.2/index.js win32
-      - run: popd
+      - name: Install dependencies
+        working-directory: ./lpak-1.1.2
+        run: npm install
+      - name: Run lpak
+        working-directory: /example-project
+        run: node ${{ github.workspace }}/lpak-1.1.2/index.js win32
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
