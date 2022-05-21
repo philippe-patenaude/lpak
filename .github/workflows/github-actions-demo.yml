@@ -16,6 +16,8 @@ jobs:
       - run: unzip lpak.zip
       - run: pushd ${{ github.workspace }}/lpak-1.1.2
       - run: npm install
+      - run: popd
+      - run: pushd pushd ${{ github.workspace }}/example-project
       - run: node index.js win32
       - run: popd
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
