@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: philippe-patenaude/lpak@v1.1.4
+        uses: philippe-patenaude/lpak@v1.1.5
         with:
           RELEASE_VERSION: 0.0.5
           GAME_NAME: lpak-example
