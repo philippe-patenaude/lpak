@@ -23,7 +23,9 @@ jobs:
           unzip lpak.zip
           cd ./lpak-${{ env.LPAK_VERSION }}
           npm install
-          cd ..
+          pwd
+          cd ../
+          pwd
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js win32
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
           WIN32_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/win32/bundle/version.txt)
