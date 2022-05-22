@@ -2,6 +2,7 @@ name: GitHub Actions Demo
 on: [push]
 env:
   LPAK_VERSION: 1.1.3
+  RELEASE_VERSION: 0.0.1
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
       - run: wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
       - run: unzip lpak.zip
       - name: Install dependencies
-        working-directory: ./lpak-$LPAK_VERSION
+        working-directory: ./lpak-${{ env.LPAK_VERSION }}
         run: npm install
       - name: Run lpak
         working-directory: ./example-project
@@ -30,8 +31,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
           body: |
             Changes in this Release
             - First Change
