@@ -1,5 +1,5 @@
 name: GitHub Actions Demo
-on: [push]
+on: [workflow_dispatch]
 env:
   LPAK_VERSION: 1.1.3
   RELEASE_VERSION: 0.0.4
@@ -14,16 +14,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: Setup lpak
+      - name: Run lpak
+        id: lpak
+        working-directory: ./${{ env.GAME_DIR }}
         run: |
           wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
           unzip lpak.zip
           cd ./lpak-${{ env.LPAK_VERSION }}
           npm install
-      - name: Run lpak
-        id: lpak
-        working-directory: ./${{ env.GAME_DIR }}
-        run: |
+          cd ..
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js win32
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
           WIN32_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/win32/bundle/version.txt)
