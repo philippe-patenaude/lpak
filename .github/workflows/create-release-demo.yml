@@ -7,7 +7,7 @@ env:
   GAME_NAME: lpak-example
   GAME_DIR: example-project/
 jobs:
-  Explore-GitHub-Actions:
+  Create-Release-Demo:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
