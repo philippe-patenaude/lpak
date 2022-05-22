@@ -19,7 +19,9 @@ jobs:
         run: npm install
       - name: Run lpak
         working-directory: ./example-project
-        run: node ${{ github.workspace }}/lpak-1.1.3/index.js win32
+        run: |
+          node ${{ github.workspace }}/lpak-1.1.3/index.js win32
+          node ${{ github.workspace }}/lpak-1.1.3/index.js osx
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
