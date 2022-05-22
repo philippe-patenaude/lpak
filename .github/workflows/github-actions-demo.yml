@@ -1,5 +1,7 @@
 name: GitHub Actions Demo
 on: [push]
+env:
+  LPAK_VERSION: 1.1.3
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -12,16 +14,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v1.1.3.zip" -O lpak.zip
+      - run: wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
       - run: unzip lpak.zip
       - name: Install dependencies
-        working-directory: ./lpak-1.1.3
+        working-directory: ./lpak-$LPAK_VERSION
         run: npm install
       - name: Run lpak
         working-directory: ./example-project
         run: |
-          node ${{ github.workspace }}/lpak-1.1.3/index.js win32
-          node ${{ github.workspace }}/lpak-1.1.3/index.js osx
+          node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js win32
+          node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
