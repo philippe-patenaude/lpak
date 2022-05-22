@@ -21,15 +21,13 @@ jobs:
         run: |
           wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
           unzip lpak.zip
-          cd ./lpak-${{ env.LPAK_VERSION }}
+          cd ./lpak-$LPAK_VERSION
           npm install
-          pwd
           cd ../
-          pwd
-          node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js win32
-          node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
-          WIN32_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/win32/bundle/version.txt)
-          OSX_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/osx/bundle/love.app/Contents/Resources/version.txt)
+          node ./lpak-$LPAK_VERSION/index.js win32
+          node ./lpak-$LPAK_VERSION/index.js osx
+          WIN32_VERSION=$(<./release/win32/bundle/version.txt)
+          OSX_VERSION=$(<./release/osx/bundle/love.app/Contents/Resources/version.txt)
           echo "::set-output name=WIN32_VERSION::$WIN32_VERSION"
           echo "::set-output name=OSX_VERSION::$OSX_VERSION"
       - name: Create release
