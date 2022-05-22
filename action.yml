@@ -11,8 +11,6 @@ inputs:
     description: 'The directory relative to the project root where the lpak.json file is.'
     required: false
     default: ''
-env:
-  LPAK_VERSION: 1.1.4
 runs:
   using: "composite"
   steps:
@@ -24,6 +22,8 @@ runs:
       - name: Run lpak
         id: lpak
         working-directory: ./${{ inputs.GAME_DIR }}
+        env:
+          LPAK_VERSION: 1.1.4
         run: |
           wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
           unzip lpak.zip
