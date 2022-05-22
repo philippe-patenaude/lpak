@@ -28,8 +28,10 @@ jobs:
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
           WIN32_VERSION=$(<${{ github.workspace }}/example-project/release/win32/bundle/version.txt)
           OSX_VERSION=$(<${{ github.workspace }}/example-project/release/osx/bundle/love.app/Contents/Resources/version.txt)
-          echo '::set-output name=WIN32_VERSION::$WIN32_VERSION'
-          echo '::set-output name=OSX_VERSION::$OSX_VERSION'
+          echo "::set-output name=WIN32_VERSION::$WIN32_VERSION"
+          echo "::set-output name=OSX_VERSION::$OSX_VERSION"
+          echo "Win32 Version: $WIN32_VERSION"
+          echo "OSX Version: $OSX_VERSION"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
