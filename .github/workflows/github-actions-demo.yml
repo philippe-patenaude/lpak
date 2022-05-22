@@ -22,12 +22,12 @@ jobs:
           npm install
       - name: Run lpak
         id: lpak
-        working-directory: ./${{ GAME_DIR }}
+        working-directory: ./${{ env.GAME_DIR }}
         run: |
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js win32
           node ${{ github.workspace }}/lpak-$LPAK_VERSION/index.js osx
-          WIN32_VERSION=$(<${{ github.workspace }}/${{ GAME_DIR }}release/win32/bundle/version.txt)
-          OSX_VERSION=$(<${{ github.workspace }}/${{ GAME_DIR }}release/osx/bundle/love.app/Contents/Resources/version.txt)
+          WIN32_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/win32/bundle/version.txt)
+          OSX_VERSION=$(<${{ github.workspace }}/${{ env.GAME_DIR }}release/osx/bundle/love.app/Contents/Resources/version.txt)
           echo "::set-output name=WIN32_VERSION::$WIN32_VERSION"
           echo "::set-output name=OSX_VERSION::$OSX_VERSION"
       - name: Create release
@@ -50,8 +50,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ GAME_DIR }}release/win32/${{ GAME_NAME }}.zip
-          asset_name: ${{ GAME_NAME }}_${{ steps.lpak.outputs.WIN32_VERSION }}.zip
+          asset_path: ./${{ env.GAME_DIR }}release/win32/${{ env.GAME_NAME }}.zip
+          asset_name: ${{ env.GAME_NAME }}_${{ steps.lpak.outputs.WIN32_VERSION }}.zip
           asset_content_type: application/zip
       - name: Upload OSX build
         uses: actions/upload-release-asset@v1
@@ -59,8 +59,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ GAME_DIR }}release/osx/${{ GAME_NAME }}.zip
-          asset_name: ${{ GAME_NAME }}_${{ steps.lpak.outputs.OSX_VERSION }}.zip
+          asset_path: ./${{ env.GAME_DIR }}release/osx/${{ env.GAME_NAME }}.zip
+          asset_name: ${{ env.GAME_NAME }}_${{ steps.lpak.outputs.OSX_VERSION }}.zip
           asset_content_type: application/zip
       - name: Publish release
         uses: StuYarrow/publish-release@v1
