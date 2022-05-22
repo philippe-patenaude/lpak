@@ -1,6 +1,6 @@
 {
   "name": "lpak-build",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "This project is used to build Love 2D game distributable packages.",
   "main": "index.js",
   "scripts": {
