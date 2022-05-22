@@ -1,0 +1,13 @@
+name: Create Release Demo
+on:
+  workflow_dispatch
+jobs:
+  Create-Release-Demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: philippe-patenaude/lpak@v1.1.4
+        with:
+          RELEASE_VERSION: 0.0.5
+          GAME_NAME: lpak-example
+          GAME_DIR: example-project/

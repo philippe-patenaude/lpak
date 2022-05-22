@@ -1,0 +1,76 @@
+name: 'lpak'
+description: 'Creates a Love2d game executable from an lpak.json file.'
+inputs:
+  GAME_NAME:
+    description: 'The name to give the build artifacts.'
+    required: true
+  RELEASE_VERSION:
+    description: 'The build version.'
+    required: true
+  GAME_DIR:
+    description: 'The directory relative to the project root where the lpak.json file is.'
+    required: false
+    default: ''
+env:
+  LPAK_VERSION: 1.1.4
+runs:
+  using: "composite"
+  steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Run lpak
+        id: lpak
+        working-directory: ./${{ inputs.GAME_DIR }}
+        run: |
+          wget "https://github.com/philippe-patenaude/lpak/archive/refs/tags/v$LPAK_VERSION.zip" -O lpak.zip
+          unzip lpak.zip
+          cd ./lpak-$LPAK_VERSION
+          npm install
+          cd ../
+          node ./lpak-$LPAK_VERSION/index.js win32
+          node ./lpak-$LPAK_VERSION/index.js osx
+          WIN32_VERSION=$(<./release/win32/bundle/version.txt)
+          OSX_VERSION=$(<./release/osx/bundle/love.app/Contents/Resources/version.txt)
+          echo "::set-output name=WIN32_VERSION::$WIN32_VERSION"
+          echo "::set-output name=OSX_VERSION::$OSX_VERSION"
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ inputs.RELEASE_VERSION }}
+          release_name: Release ${{ inputs.RELEASE_VERSION }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false
+      - name: Upload Win32 build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}.zip
+          asset_name: ${{ inputs.GAME_NAME }}_${{ steps.lpak.outputs.WIN32_VERSION }}.zip
+          asset_content_type: application/zip
+      - name: Upload OSX build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}.zip
+          asset_name: ${{ inputs.GAME_NAME }}_${{ steps.lpak.outputs.OSX_VERSION }}.zip
+          asset_content_type: application/zip
+      - name: Publish release
+        uses: StuYarrow/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          id: ${{ steps.create_release.outputs.id }}
