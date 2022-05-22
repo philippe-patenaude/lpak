@@ -36,11 +36,12 @@ runs:
           OSX_VERSION=$(<./release/osx/bundle/love.app/Contents/Resources/version.txt)
           echo "::set-output name=WIN32_VERSION::$WIN32_VERSION"
           echo "::set-output name=OSX_VERSION::$OSX_VERSION"
+        shell: bash
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ github.token }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ inputs.RELEASE_VERSION }}
           release_name: Release ${{ inputs.RELEASE_VERSION }}
@@ -53,7 +54,7 @@ runs:
       - name: Upload Win32 build
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}.zip
@@ -62,7 +63,7 @@ runs:
       - name: Upload OSX build
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}.zip
@@ -71,6 +72,6 @@ runs:
       - name: Publish release
         uses: StuYarrow/publish-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           id: ${{ steps.create_release.outputs.id }}
