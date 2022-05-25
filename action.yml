@@ -45,10 +45,7 @@ runs:
         with:
           tag_name: ${{ inputs.RELEASE_VERSION }}
           release_name: Release ${{ inputs.RELEASE_VERSION }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          body: ${{ inputs.GAME_NAME }} ${{ inputs.RELEASE_VERSION }}
           draft: true
           prerelease: false
       - name: Upload Win32 build
