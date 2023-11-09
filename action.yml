@@ -46,7 +46,7 @@ runs:
           draft: true
           prerelease: false
           artifactContentType: application/zip
-          artifacts: "${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip,${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip"
+          artifacts: "./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip,./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip"
       - name: Publish release
         uses: StuYarrow/publish-release@v1
         env:
