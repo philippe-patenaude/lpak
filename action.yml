@@ -31,9 +31,9 @@ runs:
           npm install
           cd ../
           node ./lpak-$LPAK_VERSION/index.js win32
-          mv ./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip
+          mv ./release/win32/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip
           node ./lpak-$LPAK_VERSION/index.js osx
-          mv ./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip
+          mv ./release/osx/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip
         shell: bash
       - name: Create release
         id: create_release
