@@ -31,7 +31,9 @@ runs:
           npm install
           cd ../
           node ./lpak-$LPAK_VERSION/index.js win32
+          mv ./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip
           node ./lpak-$LPAK_VERSION/index.js osx
+          mv ./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}.zip ${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip
         shell: bash
       - name: Create release
         id: create_release
@@ -43,24 +45,8 @@ runs:
           body: ${{ inputs.GAME_NAME }} ${{ inputs.RELEASE_VERSION }}
           draft: true
           prerelease: false
-      - name: Upload Win32 build
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ inputs.GAME_DIR }}release/win32/${{ inputs.GAME_NAME }}.zip
-          asset_name: ${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip
-          asset_content_type: application/zip
-      - name: Upload OSX build
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ inputs.GAME_DIR }}release/osx/${{ inputs.GAME_NAME }}.zip
-          asset_name: ${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip
-          asset_content_type: application/zip
+          artifactContentType: application/zip
+          artifacts: "${{ inputs.GAME_NAME }}_Win32_${{ inputs.RELEASE_VERSION }}.zip,${{ inputs.GAME_NAME }}_OSX_${{ inputs.RELEASE_VERSION }}.zip"
       - name: Publish release
         uses: StuYarrow/publish-release@v1
         env:
