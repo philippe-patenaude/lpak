@@ -52,3 +52,9 @@ To configure a game to use lpak, use the below `lpak.json` example.
 `love-version` is the version of love that the game will be packaged with.
 `files` is the list of source code and resource files to be packaged. This can include directories.
 `includes` is a list of resources that need to be reachable by users, such as a README or a license.
+
+GitHub Action
+=============
+This project comes with a GitHub action that allows game projects to run lpak and archive the build in their repos.
+
+To make a new version of the GitHub Action available, add a tag to the commit that has the most recent changes. Publish that tag as a release. The LPAK artifact does not need to be included in the release for the GitHub action.
