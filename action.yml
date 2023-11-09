@@ -35,11 +35,12 @@ runs:
         shell: bash
       - name: Create release
         id: create_release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: "${{ github.token }}" # This token is provided by Actions, you do not need to create your own token
-          automatic_release_tag: ${{ inputs.RELEASE_VERSION }}
-          title: Release ${{ inputs.GAME_NAME }} ${{ inputs.RELEASE_VERSION }}
+          token: ${{ github.token }} # This token is provided by Actions, you do not need to create your own token
+          tag: ${{ inputs.RELEASE_VERSION }}
+          name: Release ${{ inputs.RELEASE_VERSION }}
+          body: ${{ inputs.GAME_NAME }} ${{ inputs.RELEASE_VERSION }}
           draft: true
           prerelease: false
       - name: Upload Win32 build
