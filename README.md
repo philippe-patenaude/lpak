@@ -58,3 +58,8 @@ GitHub Action
 This project comes with a GitHub action that allows game projects to run lpak and archive the build in their repos.
 
 To make a new version of the GitHub Action available, add a tag to the commit that has the most recent changes. Publish that tag as a release. The LPAK artifact does not need to be included in the release for the GitHub action.
+
+Example:
+Create tag: `git tag -a v1.1.9 -m "Changed 3rd party dependencies to supported dependencies."`
+Publish tag: `git push origin v1.1.9`
+Go to GitHub and select the tag and click "Create release". Put in relevant details and publish. You can now reference the new version when referencing this GitHub action.
