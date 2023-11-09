@@ -1,4 +1,4 @@
-name: Create Release Demo
+name: Create Release Demo - GitHub Action
 on:
   workflow_dispatch
 jobs:
