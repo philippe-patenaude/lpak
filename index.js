@@ -45,7 +45,6 @@ if (!fse.pathExistsSync(lpakPath)) {
 var lpak = require(lpakPath)
 var applicationName = lpak.name;
 
-var buildConfigDir = path.join(lpakUserDirectory, "buildConfigs.json");
 var buildConfigs = null;
 var tempLoveDir = null;
 var tempLoveZip = null;
@@ -58,15 +57,12 @@ var bundleDir = null;
 var build = null;
 var loveConfig = null;
 
-console.log("Downloading build configurations.");
-
 fse.ensureDirSync(lpakUserDirectory);
 
-download("https://raw.githubusercontent.com/philippe-patenaude/lpak/master/buildConfigs.json", buildConfigDir, function(err) {
+var bundledConfigPath = path.join(__dirname, "buildConfigs.json");
 
-    if (err) throw err;
-
-    buildConfigs = require(buildConfigDir);
+function loadBuildConfigs() {
+    buildConfigs = require(bundledConfigPath);
 
     var buildConfigByVersion = buildConfigs[lpak["love-version"]];
     if (!buildConfigByVersion) {
@@ -75,12 +71,22 @@ download("https://raw.githubusercontent.com/philippe-patenaude/lpak/master/build
     }
 
     buildConfigs = buildConfigByVersion.build;
-    
+
     buildConfigs.osx.includes[0].finalName = applicationName+".app";
 
     prepareBuild();
+}
 
-});
+if (fse.pathExistsSync(bundledConfigPath)) {
+    console.log("Using bundled build configurations.");
+    loadBuildConfigs();
+} else {
+    console.log("Downloading build configurations.");
+    download("https://raw.githubusercontent.com/philippe-patenaude/lpak/master/buildConfigs.json", bundledConfigPath, function(err) {
+        if (err) throw err;
+        loadBuildConfigs();
+    });
+}
 
 function prepareBuild() {
     
